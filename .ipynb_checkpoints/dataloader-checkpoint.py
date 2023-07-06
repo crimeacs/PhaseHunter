@@ -146,7 +146,7 @@ class Waveforms_dataset(Dataset):
 
         # If something went wrong
         if np.isnan(sample).any():
-            sample = np.zeros(3, self.augmentations.crop_length)
+            sample = np.zeros((3, self.augmentations.crop_length))
             target_P = 0
             target_S = 0
             
