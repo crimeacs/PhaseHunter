@@ -8,7 +8,7 @@ Before we start, make sure to install all the necessary dependencies. PhaseHunte
 To install PhaseHunter:
 
 ```shell
-pip install git+
+pip install git+https://github.com/crimeacs/PhaseHunter.git
 ```
 
 ## Processing continuous waveform data
@@ -19,7 +19,7 @@ The main method provided by PhaseHunter is `process_continuous_waveform`. This m
 def process_continuous_waveform(self, st: Stream) -> pd.DataFrame:
 ```
 
-The input, `st`, should be a three-component continuous waveform (for example, from a three-component seismometer). 
+The input, `st`, should be a three-component continuous waveform. 
 
 The method returns a pandas DataFrame with the phase predictions and their uncertainties.
 
@@ -29,6 +29,7 @@ Let's assume that `st` is your seismic stream. Then, the usage is as follows:
 
 ```python
 # Instantiate PhaseHunter
+from PhaseHunter.model import PhaseHunter
 ph = PhaseHunter()
 
 # Process waveform
