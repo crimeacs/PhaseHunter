@@ -1,4 +1,4 @@
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, Any
 
 from lightning import seed_everything
 import lightning as pl
@@ -16,6 +16,8 @@ from scipy.special import comb
 
 from tqdm.auto import tqdm
 import pandas as pd
+
+from obspy import Stream
 
 seed_everything(42, workers=False)
 torch.set_float32_matmul_precision('medium')
@@ -376,110 +378,173 @@ class PhaseHunter(pl.LightningModule):
         return dist_space, kde, val, uncertainty
 
 
-    def process_continuous_waveform(self, st):
-        """Processes continuous waveform to make predictions."""
-        # Get time of the stream
+    def process_continuous_waveform(self, st: Stream) -> pd.DataFrame:
+        """
+        Processes a continuous seismic waveform to make phase predictions. The phase predictions 
+        and their uncertainties are returned as a pandas DataFrame.
+    
+        Args:
+            st (Stream): The seismic waveform to process, which must consist of three components.
+    
+        Returns:
+            pd.DataFrame: The phase predictions and their uncertainties.
+    
+        Note:
+            This function currently only works with three-component seismic data.
+        """
+        
+        # Ensure input waveform is three-component
         assert len(st) == 3, 'For the moment, PhaseHunter works only with 3C input data'
         
+        # Get the start and end time of the stream
         start_time = st[0].stats.starttime
         end_time = st[0].stats.endtime
         
         # Define the chunk size in seconds
         chunk_size = 60
         
-        # Define storage
+        # Initialize empty lists for storing chunks and predictions
         chunks = []
         predictions = pd.DataFrame()
         
-        # Loop over the time range with the step equal to chunk_size
+        # Loop over the time range with a step equal to chunk_size
         for chunk_start in tqdm(np.arange(start_time, end_time, chunk_size)):
             # Define the chunk end time
             chunk_end = chunk_start + chunk_size
-        
-            # Slice the stream
+    
+            # Slice the stream into a chunk and normalize it
             chunk = st.slice(chunk_start, chunk_end)
             chunk = np.vstack([x.data for x in chunk], dtype='float')[:,:-1]
             chunk -= chunk.mean(axis=0)
-
-            # Normalize
             max_val = np.max(np.abs(chunk))
             chunk = chunk/max_val
-
+    
+            # Convert the chunk to a PyTorch tensor
             chunk = torch.tensor(chunk, dtype=torch.float)
-        
+    
+            # Stack the chunk and move it to the GPU
             inference_sample = torch.stack([chunk]*128).cuda()
             
+            # Make phase predictions without tracking gradients
             with torch.no_grad():
                 preds, embeddings = self(inference_sample)
-                
+    
+                # Detach predictions and embeddings from the computation graph and move to CPU
                 p_pred = preds[:,0].detach().cpu()
                 s_pred = preds[:,1].detach().cpu()
                 embeddings = torch.mean(embeddings, axis=0).detach().cpu().numpy()
-        
+    
+                # Estimate most likely phase arrival times and their uncertainties
                 p_dist, p_kde, p_val, p_uncert = self.get_likely_val(p_pred)
                 s_dist, s_kde, s_val, s_uncert = self.get_likely_val(s_pred)
-        
+    
+                # Convert phase arrival times to absolute times
                 p_time = chunk_start+p_val.item()*chunk_size
                 s_time = chunk_start+s_val.item()*chunk_size
-        
+    
+                # Append the phase predictions to the DataFrame
                 predictions = predictions.append({'p_time': p_time, 's_time':s_time,
                                     'p_uncert' : p_uncert, 's_uncert' : s_uncert,
                                     'embedding' : embeddings}, ignore_index=True)
-        
+    
+        # Compute phase confidences as the inverse of their uncertainties
         predictions['p_conf'] = 1/predictions['p_uncert']
         predictions['s_conf'] = 1/predictions['s_uncert']
+    
+        # Normalize phase confidences to the range [0, 1]
         predictions['p_conf'] /= predictions['p_conf'].max()
         predictions['s_conf'] /= predictions['s_conf'].max()
-        
+    
+        # Compute relative phase arrival times
         predictions['p_time_rel'] = (predictions.p_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s')) - pd.Timestamp(predictions.p_time.iloc[0].date)).dt.total_seconds()
-        
         predictions['s_time_rel'] = (predictions.s_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s')) - pd.Timestamp(predictions.s_time.iloc[0].date)).dt.total_seconds()
+    
         return predictions
 
-            
-    def training_step(self, batch, batch_idx):
-        """Defines the training step for PhaseHunter."""
-        # training_step defines the train loop.
+    def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor, torch.Tensor], batch_idx: int) -> torch.Tensor:
+        """
+        Defines a single step in the training loop for PhaseHunter.
+    
+        Args:
+            batch (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]): A tuple containing an input batch (x), 
+                and the corresponding P-wave (y_p) and S-wave (y_s) target tensors.
+            batch_idx (int): The index of the current batch.
+    
+        Returns:
+            torch.Tensor: The computed loss for this training step.
+        """
+        # Unpack the batch
         x, y_p, y_s = batch
-        
+    
+        # Perform forward pass and get predictions
         picks, embedding = self(x)
-        
+    
+        # Extract P and S phase picks
         p_pick  = picks[:,0]
         s_pick  = picks[:,1]
-
+    
+        # Compute losses for P and S phase picks
         p_loss = self.compute_loss(y_p, p_pick, mae_name='P')
         s_loss = self.compute_loss(y_s, s_pick, mae_name='S')
-
+    
+        # Combine losses
         loss = (p_loss+s_loss)/self.n_outs
-        
+    
+        # Log the loss
         self.log('Loss/train', loss, on_step=True, on_epoch=False, prog_bar=True)
-        
+    
         return loss
     
-    def validation_step(self, batch, batch_idx):
-        """Defines the validation step for PhaseHunter."""
+    def validation_step(self, batch: Tuple[torch.Tensor, torch.Tensor, torch.Tensor], batch_idx: int) -> torch.Tensor:
+        """
+        Defines a single step in the validation loop for PhaseHunter.
+    
+        Args:
+            batch (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]): A tuple containing an input batch (x), 
+                and the corresponding P-wave (y_p) and S-wave (y_s) target tensors.
+            batch_idx (int): The index of the current batch.
+    
+        Returns:
+            torch.Tensor: The computed loss for this validation step.
+        """
+        # Unpack the batch
         x, y_p, y_s = batch
-        
+    
+        # Perform forward pass and get predictions
         picks, embedding = self(x)
-        
+    
+        # Extract P and S phase picks
         p_pick  = picks[:,0]
         s_pick  = picks[:,1]
-
+    
+        # Compute losses for P and S phase picks
         p_loss = self.compute_loss(y_p, p_pick, mae_name='P')
         s_loss = self.compute_loss(y_s, s_pick, mae_name='S')
-
+    
+        # Combine losses
         loss = (p_loss+s_loss)/self.n_outs
-            
+    
+        # Log the loss
         self.log('Loss/val',  loss, on_step=False, on_epoch=True, prog_bar=False)
-        
+    
         return loss
-
-    def configure_optimizers(self):
-        """Defines the optimizer and scheduler for PhaseHunter."""
-        optimizer = torch.optim.Adam(self.parameters(), lr=3e-5)
+    
+    def configure_optimizers(self) -> dict:
+        """
+        Defines the optimizer and scheduler for PhaseHunter.
+    
+        Returns:
+            dict: A dictionary containing the optimizer, the learning rate scheduler, and the metric to monitor.
+        """
+        # Define the optimizer
+        optimizer = torch.optim.Adam(self.parameters(), lr=3e-4)
+    
+        # Define the learning rate scheduler
         scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10, cooldown=10, threshold=1e-6)
-        # scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, 3e-4,  epochs=300, steps_per_epoch=len(train_loader))
+    
+        # Define the metric to monitor
         monitor = 'Loss/train'
+    
         return {"optimizer": optimizer,  "lr_scheduler": scheduler, 'monitor': monitor}
     
     
