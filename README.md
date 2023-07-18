@@ -48,26 +48,9 @@ The returned DataFrame, `predictions`, includes the following columns:
 - `p_time_rel`: The P-wave arrival time relative to the first prediction
 - `s_time_rel`: The S-wave arrival time relative to the first prediction
 
-## Estimating most likely values
-
-To compute the most likely phase arrival times and their uncertainties, PhaseHunter uses the method `get_likely_val`. 
-
-This method computes the Kernel Density Estimation (KDE) of the input data, and then finds the peak of the density estimate to determine the most likely value. It also calculates an uncertainty measure based on the range of the data.
-
-```python
-def get_likely_val(self, array: np.ndarray) -> Tuple[np.ndarray, gaussian_kde, torch.Tensor, float]:
-```
-
-The input, `array`, should be a numpy array of seismic phase arrival times (either P-wave or S-wave). 
-
-The method returns a tuple including the KDE of the input data, the most likely value, and the uncertainty.
 
 ## Contributing
 
 Contributions to PhaseHunter are welcome! Feel free to open a pull request with your changes or improvements.
 
 While I am working on a nicer repo, please consider trying the demo here: https://huggingface.co/spaces/crimeacs/phase-hunter
-
-## License
-
-PhaseHunter is released under the MIT License. Please see the `LICENSE` file for more details.
