@@ -1,4 +1,5 @@
 # PhaseHunter: Quickstart Guide
+![PhaseHunter](cover.png)
 
 <details>
   <summary><h2>How to install?</h2></summary>
