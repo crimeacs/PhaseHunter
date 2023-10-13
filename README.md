@@ -1,56 +1,41 @@
-# PhaseHunter: Seismic Phase Arrival Time Prediction
-PhaseHunter is a Python module for estimating the most likely arrival times of seismic phases in continuous waveform data. This tutorial will guide you through the process of processing waveform data and making phase arrival time predictions using PhaseHunter.
+# How to start
 
-## Installation
+## Instructions to Create a Conda Environment
+1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
 
-Before we start, make sure to install all the necessary dependencies. PhaseHunter primarily depends on `NumPy`, `pandas`, `torch`, `scipy`, and `obspy`. 
-
-To install PhaseHunter:
-
-```shell
-pip install git+https://github.com/crimeacs/PhaseHunter.git
+2. Create a New Environment: Open a terminal or Anaconda prompt and run the following command to create a new environment named phasehunter (you can choose a different name if you want):
+```bash
+conda create --name phasehunter python=3.10
 ```
 
-## Processing continuous waveform data
-
-The main method provided by PhaseHunter is `process_continuous_waveform`. This method takes as input a continuous waveform and makes phase arrival time predictions. The method is part of the PhaseHunter class, and it is defined as follows:
-
-```python
-def process_continuous_waveform(self, st: Stream) -> pd.DataFrame:
+3. Activate the New Environment:
+```bash
+conda activate phasehunter
 ```
 
-The input, `st`, should be a three-component continuous waveform. 
-
-The method returns a pandas DataFrame with the phase predictions and their uncertainties.
-
-### Method usage
-
-Let's assume that `st` is your seismic stream. Then, the usage is as follows:
-
-```python
-# Instantiate PhaseHunter
-from PhaseHunter.model import PhaseHunter
-ph = PhaseHunter()
-
-# Process waveform
-predictions = ph.process_continuous_waveform(st)
+4. Install PyTorch and torchvision: Based on your system and CUDA version, install PyTorch and torchvision. Instructions can be found on the [PyTorch official site](https://pytorch.org/get-started/locally/). For example, for Linux use:
+```bash
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
-The returned DataFrame, `predictions`, includes the following columns:
+5. Install Required Libraries:
+```bash
+conda install numpy pandas scikit-learn scipy tqdm
+pip install obspy pytorch-lightning lightning wandb
+pip install git+https://github.com/nikitadurasov/masksembles
+```
 
-- `p_time`: The most likely P-wave arrival time
-- `s_time`: The most likely S-wave arrival time
-- `p_uncert`: The uncertainty of the P-wave arrival time
-- `s_uncert`: The uncertainty of the S-wave arrival time
-- `embedding`: The embedding representation of the waveform
-- `p_conf`: The confidence in the P-wave prediction (higher is better)
-- `s_conf`: The confidence in the S-wave prediction (higher is better)
-- `p_time_rel`: The P-wave arrival time relative to the first prediction
-- `s_time_rel`: The S-wave arrival time relative to the first prediction
+6. Install PhaseHunter
+```bash
+pip install git+https://github.com/crimeacs/PhaseHunter
+```
 
+7. Final Notes:
 
-## Contributing
+* Remember to activate your environment (`conda activate phasehunter`) every time you work on this project.
+* It's a good idea to periodically update the packages to get the latest bug fixes and improvements.
+* If you encounter any compatibility issues or errors during installation, they might be due to version conflicts. In that case, you'll need to identify the versions that are compatible and specify them during installation.
 
-Contributions to PhaseHunter are welcome! Feel free to open a pull request with your changes or improvements.
+You should now have a working conda environment with the necessary packages for your project!
 
-While I am working on a nicer repo, please consider trying the demo here: https://huggingface.co/spaces/crimeacs/phase-hunter
+## 
