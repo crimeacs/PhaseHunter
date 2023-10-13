@@ -14,9 +14,9 @@ setup(
         'pytorch-lightning',
         'lightning',
         'wandb',
-        'git+https://github.com/nikitadurasov/masksembles'
     ],
     author='Artemii Novoselov',
     author_email='anovosel@stanford.edu',
     description='PhaseHunter is a state-of-the-art deep learning model for precise estimation and uncertainty quantification of seismic phase onset times.',
     url='https://github.com/crimeacs/PhaseHunter',
+)
