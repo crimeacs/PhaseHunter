@@ -92,3 +92,10 @@ print(predictions)
 <a target="_blank" href="https://colab.research.google.com/github/crimeacs/PhaseHunter/blob/main/PhaseHunter_intro.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
+
+# How to train PhaseHunter
+For training your own version of PhaseHunter on e.g. STEAD dataset, please follow following steps:
+
+1. Download data of your interest (e.g. from SeisBench)
+2. Convert it to the format required by PhaseHunter using `training/convert_STEAD.py` script
+3. Train on converted data using `training/train_STEAD.py` script
