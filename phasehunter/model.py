@@ -379,6 +379,46 @@ class PhaseHunter(pl.LightningModule):
         return dist_space, kde, val, uncertainty
 
     def process_continuous_waveform(self, st: Stream) -> pd.DataFrame:
+        """
+        Processes a continuous seismic waveform and predicts P and S wave arrival times using PhaseHunter.
+
+        Parameters:
+        -----------
+        st : Stream
+            The input seismic data as an ObsPy Stream object with three components.
+
+        Returns:
+        --------
+        pd.DataFrame
+            A DataFrame containing the following columns:
+                - p_time: Predicted P-wave arrival time.
+                - s_time: Predicted S-wave arrival time.
+                - p_uncert: Uncertainty associated with the P-wave prediction.
+                - s_uncert: Uncertainty associated with the S-wave prediction.
+                - embedding: Embedding representation of the chunk.
+                - p_conf: Confidence level of the P-wave prediction.
+                - s_conf: Confidence level of the S-wave prediction.
+                - p_time_rel: Relative P-wave arrival time in seconds from the start of the input stream.
+                - s_time_rel: Relative S-wave arrival time in seconds from the start of the input stream.
+
+        Notes:
+        ------
+        The function assumes that the input Stream object has three components.
+        The neural network inference is performed on chunks of data of 30 seconds. 
+        The output DataFrame is a result of aggregating predictions for each chunk and filtering duplicate rows.
+
+        Raises:
+        -------
+        AssertionError
+            If the input Stream object doesn't contain three components.
+
+        Examples:
+        ---------
+        >>> from obspy import read
+        >>> st = read('path_to_your_waveform_data')
+        >>> predictions = process_continuous_waveform(st)
+        >>> print(predictions)
+        """
         assert len(st) == 3, 'For the moment, PhaseHunter works only with 3C input data'
         
         start_time = st[0].stats.starttime
@@ -394,13 +434,17 @@ class PhaseHunter(pl.LightningModule):
     
             chunk = st.slice(chunk_start, chunk_end)
             chunk_orig = np.vstack([x.data for x in chunk], dtype='float')[:,:-1]
+            
+            if chunk_orig.shape[-1] != chunk_size * 100:
+                continue
+            
             chunk = chunk_orig - chunk_orig.mean(axis=0)
             max_val = np.max(np.abs(chunk))
             chunk = chunk/max_val
     
             chunk = torch.tensor(chunk, dtype=torch.float)
     
-            inference_sample = torch.stack([chunk]*128).cuda()
+            inference_sample = torch.stack([chunk]*128).to(self.device)
             
             with torch.no_grad():
                 preds, embeddings = self(inference_sample)
