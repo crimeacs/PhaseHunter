@@ -433,8 +433,11 @@ class PhaseHunter(pl.LightningModule):
             chunk_end = chunk_start + chunk_size
     
             chunk = st.slice(chunk_start, chunk_end)
-            chunk_orig = np.vstack([x.data for x in chunk], dtype='float')[:,:-1]
-            
+        
+            # chunk_orig = np.vstack([x.data for x in chunk], dtype='float')[:,:-1]   
+            chunk_orig = np.vstack([x.data for x in chunk])
+            chunk_orig = chunk_orig.astype('float')[:,:-1]
+
             if chunk_orig.shape[-1] != chunk_size * 100:
                 continue
             
