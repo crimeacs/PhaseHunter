@@ -1,7 +1,7 @@
 # How to start
 
 <details>
-  <summary>## Instructions how to install PhaseHunter</summary>
+  <summary><h2>Instructions how to install PhaseHunter</h2></summary>
 1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
 
 2. Create a New Environment: Open a terminal or Anaconda prompt and run the following command to create a new environment named phasehunter (you can choose a different name if you want):
