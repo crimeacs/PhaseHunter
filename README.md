@@ -1,6 +1,7 @@
 # How to start
 
-## Instructions how to install PhaseHunter
+<details>
+  <summary>## Instructions how to install PhaseHunter</summary>
 1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
 
 2. Create a New Environment: Open a terminal or Anaconda prompt and run the following command to create a new environment named phasehunter (you can choose a different name if you want):
@@ -37,6 +38,7 @@ pip install git+https://github.com/crimeacs/PhaseHunter
 * If you encounter any compatibility issues or errors during installation, they might be due to version conflicts. In that case, you'll need to identify the versions that are compatible and specify them during installation.
 
 You should now have a working conda environment with the necessary packages for your project!
+</details>
 
 ## How to use PhaseHunter
 PhaseHunter is designed to be straightforward to use, even for those new to seismic data processing. Here's a step-by-step guide:
