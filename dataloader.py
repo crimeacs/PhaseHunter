@@ -66,11 +66,16 @@ class Augmentations:
         sample_cropped = sample[:,start_indx:end_indx]
         return sample_cropped
     
-    def preprocess(self, sample_cropped):
+    def bandpass_filter(self, sample_cropped, test):
         # sample_cropped = detrend(sample_cropped)
-        sample_cropped = self.butter_bandpass_filter(sample_cropped, lowcut=self.lowcut, highcut=self.highcut, fs=self.fs, order=self.order)
-        window = signal.windows.tukey(sample_cropped[-1].shape[0], alpha=0.1)
-        sample_cropped = sample_cropped*window
+        if test == False:
+            probability = torch.randint(0,2, size=(1,)).item()
+            if probability==1:
+                lowcut = torch.FloatTensor(size=(1,)).uniform_(0.001, 1).item()
+                highcut = torch.FloatTensor(size=(1,)).uniform_(10, 49).item()
+                sample_cropped = self.butter_bandpass_filter(sample_cropped, lowcut=lowcut, highcut=highcut, fs=self.fs, order=self.order)
+                window = signal.windows.tukey(sample_cropped[-1].shape[0], alpha=0.1)
+                sample_cropped = sample_cropped*window
         return sample_cropped
 
     def add_z_component(self, sample_cropped):
@@ -88,6 +93,11 @@ class Augmentations:
                 sample_cropped = self.rotate_waveform(sample_cropped, angle).real
         return sample_cropped
 
+    def demean(self, sample_cropped):
+        # Subtracting mean from the data
+        sample_cropped = sample_cropped - np.mean(sample_cropped, axis=-1, keepdims=True)
+        return sample_cropped
+
     def normalize(self, sample_cropped):
         max_val = np.max(np.abs(sample_cropped))
         sample_cropped_norm = sample_cropped/max_val
@@ -97,21 +107,32 @@ class Augmentations:
         if test == False:
             probability = torch.randint(0,2, size=(1,)).item()
             channel = torch.randint(1,3, size=(1,)).item()
-            if probability==1:
+            if probability == 1:
                 sample_cropped_norm[channel,:] = 1e-6
         return sample_cropped_norm
 
+    def channel_shuffle(self, sample_cropped_norm, test):
+        if test == False:
+            probability = torch.randint(0, 2, size=(1,)).item()
+            if probability == 1:
+                shuffled_indices = torch.randperm(sample_cropped_norm.shape[0])
+                sample_cropped_norm = sample_cropped_norm[shuffled_indices, :]
+        return sample_cropped_norm
+        
     def apply(self, sample, target_P, target_S, test=False):
         
         start_indx, end_indx, new_target_P, new_target_S = self.shuffle(sample, target_P, target_S, test)
 
         sample_cropped = self.cut(sample, start_indx, end_indx)
-        # sample_cropped = self.preprocess(sample_cropped)
+        sample_cropped = self.bandpass_filter(sample_cropped, test)
         sample_cropped = self.add_z_component(sample_cropped)
         sample_cropped = self.rotate(sample_cropped, test)
+        sample_cropped = self.demean(sample_cropped)
         sample_cropped_norm = self.normalize(sample_cropped)
+        
         sample_cropped_norm = self.channel_dropout(sample_cropped_norm, test)
-
+        sample_cropped_norm = self.channel_shuffle(sample_cropped_norm, test)
+        
         new_target_P = new_target_P/self.crop_length
         new_target_S = new_target_S/self.crop_length
 
