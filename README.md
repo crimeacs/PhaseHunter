@@ -87,4 +87,6 @@ print(predictions)
 `process_continuous_waveform` works with 3 channel Obspy streams of any length
 
 ## For a more comprehansive tutorial try PhaseHunter in Google Colab
-
+<a target="_blank" href="https://colab.research.google.com/github/crimeacs/PhaseHunter/blob/main/PhaseHunter_intro.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
