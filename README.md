@@ -1,7 +1,7 @@
-# How to start
+# PhaseHunter: Quickstart Guide
 
 <details>
-  <summary><h2>Instructions how to install PhaseHunter</h2></summary>
+  <summary><h2>How to install?</h2></summary>
 1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
 
 2. Create a New Environment: Open a terminal or Anaconda prompt and run the following command to create a new environment named phasehunter (you can choose a different name if you want):
@@ -89,7 +89,7 @@ print(predictions)
 `process_continuous_waveform` works with 3 channel Obspy streams of any length
 
 ## For a more comprehansive tutorial try PhaseHunter in Google Colab
-<a target="_blank" href="https://colab.research.google.com/github/crimeacs/PhaseHunter/blob/main/PhaseHunter_intro.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/crimeacs/PhaseHunter/blob/main/notebooks/PhaseHunter_intro.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
@@ -99,3 +99,6 @@ For training your own version of PhaseHunter on e.g. STEAD dataset, please follo
 1. Download data of your interest (e.g. from SeisBench)
 2. Convert it to the format required by PhaseHunter using `training/convert_STEAD.py` script
 3. Train on converted data using `training/train_STEAD.py` script
+
+# Evaluation
+We provide evaluation pipeline used for the JGR paper in a separate notebook `notebooks/PhaseHunter_EVAL.ipynb`
