@@ -378,6 +378,37 @@ class PhaseHunter(pl.LightningModule):
     
         return dist_space, kde, val, uncertainty
 
+    def align_and_pad_chunk(self, chunk, expected_samples):
+        """
+        Align and pad seismic data in a chunk.
+        
+        This function ensures that all traces in the chunk have the same start and end times 
+        and are of the same length (as specified by expected_samples). If any trace is shorter than 
+        expected_samples, it is padded with zeros.
+        
+        Parameters:
+        - chunk (Stream): The seismic data chunk to be processed.
+        - expected_samples (int): The expected number of samples for each trace in the chunk.
+        
+        Returns:
+        - Stream: The aligned and padded seismic data chunk.
+        """
+        
+        # Get the latest start time and earliest end time among the traces
+        latest_start_time = max([trace.stats.starttime for trace in chunk])
+        earliest_end_time = min([trace.stats.endtime for trace in chunk])
+        
+        for trace in chunk:
+            # Trim the trace to the new start and end times
+            trace.trim(starttime=latest_start_time, endtime=earliest_end_time, nearest_sample=True, pad=True, fill_value=0.0)
+            
+            # Check the length of the trace data and pad with zeros if necessary
+            if len(trace.data) < expected_samples:
+                padding = expected_samples - len(trace.data)
+                trace.data = np.pad(trace.data, (0, padding), 'constant')
+                    
+        return chunk
+        
     def process_continuous_waveform(self, st: Stream) -> pd.DataFrame:
         """
         Processes a continuous seismic waveform and predicts P and S wave arrival times using PhaseHunter.
@@ -425,6 +456,7 @@ class PhaseHunter(pl.LightningModule):
         end_time = st[0].stats.endtime
         
         chunk_size = 30
+        chunk_size_samples = int(chunk_size*st[0].stats.sampling_rate) + 1
         
         chunks = []
         predictions = pd.DataFrame()
@@ -433,7 +465,8 @@ class PhaseHunter(pl.LightningModule):
             chunk_end = chunk_start + chunk_size
     
             chunk = st.slice(chunk_start, chunk_end)
-        
+            chunk = self.align_and_pad_chunk(chunk, expected_samples=chunk_size_samples)
+
             # chunk_orig = np.vstack([x.data for x in chunk], dtype='float')[:,:-1]   
             chunk_orig = np.vstack([x.data for x in chunk])
             chunk_orig = chunk_orig.astype('float')[:,:-1]
