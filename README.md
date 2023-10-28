@@ -7,8 +7,9 @@
 
 <a target="_blank" href="https://huggingface.co/spaces/crimeacs/phase-hunter">
   <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Open In Hugging Face Spaces" width="64" height="64"/>
-  [Open In Hugging Face Spaces](https://huggingface.co/spaces/crimeacs/phase-hunter)
 </a>
+[Open In Hugging Face Spaces](https://huggingface.co/spaces/crimeacs/phase-hunter)
+
 
 
 
