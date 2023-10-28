@@ -5,12 +5,13 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-<script
-	type="module"
-	src="https://gradio.s3-us-west-2.amazonaws.com/3.23.0/gradio.js"
-></script>
+<iframe
+	src="https://crimeacs-phase-hunter.hf.space"
+	frameborder="0"
+	width="850"
+	height="450"
+></iframe>
 
-<gradio-app src="https://crimeacs-phase-hunter.hf.space"></gradio-app>
 
 
 <details>
