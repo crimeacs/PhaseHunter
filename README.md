@@ -5,12 +5,9 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-<iframe
-	src="https://crimeacs-phase-hunter.hf.space"
-	frameborder="0"
-	width="850"
-	height="450"
-></iframe>
+<a target="_blank" href="https://huggingface.co/spaces/crimeacs/phase-hunter">
+  <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.png" alt="Open In Hugging Face Spaces"/>
+</a>
 
 
 
