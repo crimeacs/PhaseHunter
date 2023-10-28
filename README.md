@@ -5,9 +5,13 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-<a target="_blank" href="https://huggingface.co/spaces/crimeacs/phase-hunter">
-  <img src="https://huggingface.co/datasets/huggingface/badges/blob/main/open-in-hf-spaces-md-dark.svg" alt="Open In Hugging Face Spaces"/>
-</a>
+<script
+	type="module"
+	src="https://gradio.s3-us-west-2.amazonaws.com/3.23.0/gradio.js"
+></script>
+
+<gradio-app src="https://crimeacs-phase-hunter.hf.space"></gradio-app>
+
 
 <details>
   <summary><h2>How to install?</h2></summary>
