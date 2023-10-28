@@ -5,7 +5,9 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
-[![Open In Hugging Face Spaces](https://huggingface.co/datasets/huggingface/badges/blob/main/open-in-hf-spaces-md-dark.svg)](https://huggingface.co/spaces/crimeacs/phase-hunter)
+<a target="_blank" href="https://huggingface.co/spaces/crimeacs/phase-hunter">
+  <img src="[https://colab.research.google.com/assets/colab-badge.svg](https://huggingface.co/datasets/huggingface/badges/blob/main/open-in-hf-spaces-md-dark.svg)" alt="Open In Hugging Face Spaces"/>
+</a>
 
 <details>
   <summary><h2>How to install?</h2></summary>
