@@ -479,7 +479,7 @@ class PhaseHunter(pl.LightningModule):
             chunk = chunk/max_val
     
             chunk = torch.tensor(chunk, dtype=torch.float)
-    
+            
             inference_sample = torch.stack([chunk]*128).to(self.device)
             
             with torch.no_grad():
@@ -509,9 +509,9 @@ class PhaseHunter(pl.LightningModule):
         predictions['p_conf'] /= predictions['p_conf'].max()
         predictions['s_conf'] /= predictions['s_conf'].max()
     
-        predictions['p_time_rel'] = (predictions.p_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s')) - pd.Timestamp(predictions.p_time.iloc[0].date)).dt.total_seconds()
-        predictions['s_time_rel'] = (predictions.s_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s')) - pd.Timestamp(predictions.s_time.iloc[0].date)).dt.total_seconds()
-    
+        predictions['p_time_rel'] = predictions.p_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s') -  pd.Timestamp(start_time.timestamp, unit='s')).dt.total_seconds() 
+        predictions['s_time_rel'] = predictions.s_time.apply(lambda x: pd.Timestamp(x.timestamp, unit='s') -  pd.Timestamp(start_time.timestamp, unit='s')).dt.total_seconds() 
+        
         return predictions
         
     def training_step(self, batch: Tuple[torch.Tensor, torch.Tensor, torch.Tensor], batch_idx: int) -> torch.Tensor:
