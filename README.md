@@ -1,6 +1,10 @@
 # PhaseHunter: Quickstart Guide
 ![PhaseHunter](cover.png)
 
+<a target="_blank" href="https://colab.research.google.com/github/crimeacs/PhaseHunter/blob/main/notebooks/PhaseHunter_intro.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
 <details>
   <summary><h2>How to install?</h2></summary>
 1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
