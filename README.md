@@ -5,6 +5,11 @@
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
+# Talk to PhaseHunter
+Before you begin, we suggest you to talk to PhaseHunter - a friendly assistant that can answer any of your questions about this code as well as write code snippets. E.g. try asking it how to process earthquake data from Alaska on 2019-05-01 from 2 am to 4 am. 
+
+[Talk to PhaseHunter](https://poe.com/PhaseHunter_bot)
+
 <details>
   <summary><h2>How to install?</h2></summary>
 1. Install Anaconda or Miniconda: If you haven't installed Anaconda or Miniconda, download and install it from [Anaconda's official website](https://www.anaconda.com/download) or [Miniconda's official website](https://docs.conda.io/projects/miniconda/en/latest/) respectively.
