@@ -6,7 +6,10 @@
 </a>
 
 # Talk to PhaseHunter
-Before you begin, we suggest you to talk to PhaseHunter - a friendly assistant that can answer any of your questions about this code as well as write code snippets. E.g. try asking it how to process earthquake data from Alaska on `2019-05-01 from 2 am to 4 am`. 
+Before you begin, we suggest you to talk to PhaseHunter - a friendly assistant that can answer any of your questions about this code as well as write code snippets. E.g. try asking it:
+```text
+how to process earthquake data from Alaska on `2019-05-01 from 2 am to 4 am.
+``` 
 
 [Talk to PhaseHunter](https://poe.com/PhaseHunter_bot)
 
