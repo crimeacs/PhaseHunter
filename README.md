@@ -117,3 +117,6 @@ For training your own version of PhaseHunter on e.g. STEAD dataset, please follo
 
 # Evaluation
 We provide evaluation pipeline used for the JGR paper in a separate notebook `notebooks/PhaseHunter_EVAL.ipynb`
+
+# Contact
+Send me an email if you tryied Google Colab and already talked with a Bot and still need help: anovosel@stanford.edu
