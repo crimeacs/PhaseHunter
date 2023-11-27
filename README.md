@@ -90,8 +90,7 @@ At this time, 2 pre-trained models are available:
 * `ckpts/30s_STEAD_decay-epoch=196.ckpt` - 30s version of PhaseHunter trained on STEAD dataset for 200 epochs
 * `ckpts/30s_ETHZ_decay-epoch=187.ckpt` - 30s version of PhaseHunter trained on ETHZ dataset for 200 epochs
 
-**Known Issue:**
-If pre-trained models are not available on git, please download them from [HuggingFace Hub](https://huggingface.co/crimeacs/PhaseHunter/tree/main/ckpts)
+Please download them from [HuggingFace Hub](https://huggingface.co/crimeacs/PhaseHunter/tree/main/ckpts)
 
 2. Download or use your own waveform data, e.g.:
 
